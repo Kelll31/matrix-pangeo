@@ -1,0 +1,1371 @@
+/**
+ * =============================================================================
+ * MITRE ATT&CK Matrix Styles v4.0 - OPTIMIZED & ENHANCED
+ * =============================================================================
+ * Оптимизированная версия со всеми современными улучшениями
+ * @version 4.0.0-OPTIMIZED
+ * @date 2025-10-20
+ */
+
+/* =============================================================================
+   CSS ПЕРЕМЕННЫЕ
+   ============================================================================= */
+:root {
+    --matrix-bg-primary: #1e2230;
+    --matrix-bg-secondary: #252938;
+    --matrix-bg-tertiary: #2d3142;
+    --matrix-border: #3a3f5c;
+    --matrix-text-primary: #e2e8f0;
+    --matrix-text-secondary: #94a3b8;
+    --matrix-text-muted: #6b7280;
+
+    --matrix-brand-primary: #667eea;
+    --matrix-brand-secondary: #764ba2;
+
+    --matrix-success: #10b981;
+    --matrix-warning: #fbbf24;
+    --matrix-danger: #ef4444;
+
+    --matrix-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --matrix-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
+    --matrix-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+    --matrix-radius-sm: 6px;
+    --matrix-radius-md: 8px;
+    --matrix-radius-lg: 12px;
+
+    --matrix-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =============================================================================
+   ОСНОВНОЙ КОНТЕЙНЕР
+   ============================================================================= */
+.matrix-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* =============================================================================
+   ВЕРХНИЙ СКРОЛЛБАР
+   ============================================================================= */
+.matrix-top-scrollbar-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 20px;
+    background: rgba(45, 49, 66, 0.3);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.matrix-top-scrollbar-content {
+    height: 1px;
+    background: transparent;
+}
+
+.matrix-top-scrollbar-wrapper::-webkit-scrollbar {
+    height: 12px;
+}
+
+.matrix-top-scrollbar-wrapper::-webkit-scrollbar-track {
+    background: rgba(45, 49, 66, 0.5);
+    border-radius: 6px;
+}
+
+.matrix-top-scrollbar-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--matrix-brand-primary) 0%, var(--matrix-brand-secondary) 100%);
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+
+.matrix-top-scrollbar-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--matrix-brand-secondary) 0%, var(--matrix-brand-primary) 100%);
+}
+
+/* =============================================================================
+   КОНТЕЙНЕР С ПРОКРУТКОЙ
+   ============================================================================= */
+.matrix-scroll-container {
+    flex: 1;
+    overflow: auto;
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: var(--matrix-brand-primary) rgba(45, 49, 66, 0.3);
+}
+
+.matrix-scroll-container::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.matrix-scroll-container::-webkit-scrollbar-track {
+    background: rgba(45, 49, 66, 0.3);
+    border-radius: 5px;
+}
+
+.matrix-scroll-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--matrix-brand-primary) 0%, var(--matrix-brand-secondary) 100%);
+    border-radius: 5px;
+}
+
+.matrix-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--matrix-brand-secondary) 0%, var(--matrix-brand-primary) 100%);
+}
+
+/* =============================================================================
+   ТАБЛИЦА МАТРИЦЫ
+   ============================================================================= */
+.matrix-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 16px;
+    table-layout: fixed;
+}
+
+/* =============================================================================
+   STICKY ЗАГОЛОВКИ ТАКТИК
+   ============================================================================= */
+.matrix-thead-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.tactic-header {
+    background: linear-gradient(135deg, var(--matrix-brand-primary) 0%, var(--matrix-brand-secondary) 100%);
+    padding: 0.75rem 1rem;
+    border-radius: var(--matrix-radius-lg);
+    width: 240px;
+    min-width: 240px;
+    vertical-align: top;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--matrix-shadow-md);
+    transition: var(--matrix-transition);
+}
+
+.tactic-header:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.tactic-info {
+    text-align: center;
+    color: white;
+}
+
+.tactic-id {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    opacity: 0.95;
+    margin-bottom: 0.5rem;
+}
+
+.tactic-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.3;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =============================================================================
+   КОЛОНКИ ТАКТИК
+   ============================================================================= */
+.tactic-column {
+    vertical-align: top;
+    padding: 0;
+    width: 240px;
+    min-width: 240px;
+}
+
+.empty-column {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--matrix-text-muted);
+    font-style: italic;
+    font-size: 0.875rem;
+    background: rgba(45, 49, 66, 0.3);
+    border-radius: var(--matrix-radius-md);
+    border: 1px dashed var(--matrix-border);
+}
+
+/* =============================================================================
+   КАРТОЧКИ ТЕХНИК
+   ============================================================================= */
+.technique-cell {
+    background: linear-gradient(135deg, var(--matrix-bg-tertiary) 0%, var(--matrix-bg-secondary) 100%);
+    border: 1px solid var(--matrix-border);
+    border-radius: var(--matrix-radius-md);
+    padding: 0.875rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: var(--matrix-transition);
+    position: relative;
+    overflow: hidden;
+    min-height: 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.technique-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: var(--matrix-radius-md);
+    pointer-events: none;
+}
+
+.technique-cell:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--matrix-shadow-lg), 0 0 0 1px rgba(102, 126, 234, 0.3);
+    border-color: var(--matrix-brand-primary);
+}
+
+.technique-cell:hover::before {
+    opacity: 1;
+}
+
+/* Состояния покрытия */
+.technique-cell.has-coverage {
+    border-left: 4px solid var(--matrix-success);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, var(--matrix-bg-secondary) 100%);
+}
+
+.technique-cell.has-inactive-rules {
+    border-left: 4px solid var(--matrix-warning);
+}
+
+.technique-cell.no-coverage {
+    border-left: 4px solid var(--matrix-danger);
+}
+
+/* =============================================================================
+   ЗАГОЛОВОК ТЕХНИКИ
+   ============================================================================= */
+.technique-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.technique-id-name {
+    flex: 1;
+    cursor: pointer;
+}
+
+.technique-id {
+    font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--matrix-brand-primary);
+    margin-bottom: 0.375rem;
+    letter-spacing: 0.3px;
+    text-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+}
+
+.technique-name {
+    font-size: 0.875rem;
+    color: var(--matrix-text-primary);
+    line-height: 1.4;
+    font-weight: 500;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =============================================================================
+   КНОПКА РАСКРЫТИЯ ПОДТЕХНИК
+   ============================================================================= */
+.subtechnique-toggle {
+    background: rgba(102, 126, 234, 0.15);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: var(--matrix-radius-sm);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--matrix-transition);
+    padding: 0;
+    position: relative;
+    flex-shrink: 0;
+    color: var(--matrix-brand-primary);
+}
+
+.subtechnique-toggle:hover {
+    background: rgba(102, 126, 234, 0.3);
+    border-color: var(--matrix-brand-primary);
+    transform: scale(1.1);
+}
+
+.subtechnique-toggle svg {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 2px rgba(102, 126, 234, 0.5));
+}
+
+.subtechnique-toggle.expanded {
+    background: rgba(102, 126, 234, 0.25);
+    border-color: var(--matrix-brand-primary);
+}
+
+.subtechnique-toggle.expanded svg {
+    transform: rotate(180deg);
+}
+
+.subtechnique-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: linear-gradient(135deg, var(--matrix-brand-primary) 0%, var(--matrix-brand-secondary) 100%);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+/* =============================================================================
+   БЕЙДЖИ (ПОКРЫТИЕ + КОММЕНТАРИИ)
+   ============================================================================= */
+.technique-badges {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.technique-coverage {
+    flex: 0 0 auto;
+}
+
+.coverage-badge {
+    background: linear-gradient(135deg, var(--matrix-success) 0%, #059669 100%);
+    color: white;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--matrix-radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    letter-spacing: 0.3px;
+}
+
+.coverage-badge.has-active {
+    background: linear-gradient(135deg, var(--matrix-success) 0%, #059669 100%);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.coverage-badge.has-inactive {
+    background: linear-gradient(135deg, var(--matrix-warning) 0%, #f59e0b 100%);
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.no-coverage-badge {
+    background: linear-gradient(135deg, var(--matrix-danger) 0%, #dc2626 100%);
+    color: white;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--matrix-radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* КОММЕНТАРИИ БЕЙДЖ */
+.comments-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 6px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: var(--matrix-radius-sm);
+    font-size: 11px;
+    font-weight: 600;
+    color: #6366f1;
+    cursor: pointer;
+    transition: var(--matrix-transition);
+}
+
+.comments-badge:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    transform: translateY(-1px);
+}
+
+.comments-badge svg {
+    width: 12px;
+    height: 12px;
+    opacity: 0.8;
+}
+
+.comments-count {
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Визуальный акцент для техник с комментариями */
+.technique-cell:has(.comments-badge) {
+    border-left-color: rgba(99, 102, 241, 0.5);
+}
+
+/* =============================================================================
+   СПИСОК ПОДТЕХНИК
+   ============================================================================= */
+.subtechniques-list {
+    margin-top: 0.75rem;
+    margin-left: 0.5rem;
+    padding-left: 1rem;
+    border-left: 2px solid rgba(102, 126, 234, 0.3);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =============================================================================
+   КАРТОЧКИ ПОДТЕХНИК
+   ============================================================================= */
+.subtechnique-cell {
+    background: linear-gradient(135deg, var(--matrix-bg-secondary) 0%, var(--matrix-bg-primary) 100%);
+    border: 1px solid var(--matrix-border);
+    border-radius: var(--matrix-radius-md);
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: var(--matrix-transition);
+    position: relative;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.subtechnique-cell:hover {
+    transform: translateX(6px) scale(1.02);
+    border-color: var(--matrix-brand-primary);
+    box-shadow: var(--matrix-shadow-md), 0 0 0 1px rgba(102, 126, 234, 0.2);
+    background: linear-gradient(135deg, var(--matrix-bg-tertiary) 0%, var(--matrix-bg-secondary) 100%);
+}
+
+.subtechnique-cell.has-coverage {
+    border-left: 3px solid var(--matrix-success);
+}
+
+.subtechnique-cell.has-inactive-rules {
+    border-left: 3px solid var(--matrix-warning);
+}
+
+.subtechnique-cell.no-coverage {
+    border-left: 3px solid var(--matrix-danger);
+}
+
+.subtechnique-id-name {
+    flex: 1;
+}
+
+.subtechnique-cell .technique-id {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.subtechnique-cell .technique-name {
+    font-size: 0.8125rem;
+}
+
+/* =============================================================================
+   СОСТОЯНИЯ ЗАГРУЗКИ И ОШИБОК
+   ============================================================================= */
+.loading-state,
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    min-height: 400px;
+}
+
+.loading-spinner {
+    width: 56px;
+    height: 56px;
+    border: 4px solid rgba(102, 126, 234, 0.1);
+    border-top-color: var(--matrix-brand-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-state p {
+    margin-top: 1.5rem;
+    color: var(--matrix-text-secondary);
+    font-size: 1rem;
+}
+
+.error-state {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%);
+    border-radius: var(--matrix-radius-lg);
+}
+
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.error-state h3 {
+    color: var(--matrix-text-primary);
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+}
+
+.error-state p {
+    color: var(--matrix-text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.retry-button {
+    padding: 0.875rem 1.75rem;
+    background: linear-gradient(135deg, var(--matrix-brand-primary) 0%, var(--matrix-brand-secondary) 100%);
+    border: none;
+    border-radius: var(--matrix-radius-md);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--matrix-transition);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.retry-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* =============================================================================
+   ПАНЕЛЬ ФИЛЬТРОВ
+   ============================================================================= */
+.filters-panel {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--matrix-bg-tertiary) 0%, var(--matrix-bg-secondary) 100%);
+    border-radius: var(--matrix-radius-lg);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--matrix-border);
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+}
+
+.filter-group.filter-search {
+    flex: 1;
+    min-width: 250px;
+}
+
+.filter-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--matrix-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-label i {
+    color: var(--matrix-brand-primary);
+}
+
+.filter-select,
+.filter-input {
+    padding: 0.75rem 1rem;
+    background: rgba(45, 49, 66, 0.5);
+    border: 1px solid var(--matrix-border);
+    border-radius: var(--matrix-radius-md);
+    color: var(--matrix-text-primary);
+    font-size: 0.9375rem;
+    transition: var(--matrix-transition);
+}
+
+.filter-select:hover,
+.filter-input:hover {
+    border-color: var(--matrix-brand-primary);
+    background: rgba(45, 49, 66, 0.7);
+}
+
+.filter-select:focus,
+.filter-input:focus {
+    outline: none;
+    border-color: var(--matrix-brand-primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.filter-select option {
+    background: var(--matrix-bg-secondary);
+    color: var(--matrix-text-primary);
+}
+
+/* =============================================================================
+   СТАТИСТИКА
+   ============================================================================= */
+.matrix-statistics-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.matrix-statistics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--matrix-bg-tertiary) 0%, var(--matrix-bg-secondary) 100%);
+    border: 1px solid var(--matrix-border);
+    border-radius: var(--matrix-radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: var(--matrix-transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--matrix-shadow-lg);
+    border-color: var(--matrix-brand-primary);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--matrix-radius-lg);
+    font-size: 1.5rem;
+    background: rgba(102, 126, 234, 0.15);
+    color: var(--matrix-brand-primary);
+}
+
+.stat-card.stat-success .stat-icon {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--matrix-success);
+}
+
+.stat-card.stat-primary .stat-icon {
+    background: rgba(102, 126, 234, 0.15);
+    color: var(--matrix-brand-primary);
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--matrix-text-primary);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--matrix-text-secondary);
+    font-weight: 500;
+}
+
+/* =============================================================================
+   МОДАЛЬНЫЕ ОКНА
+   ============================================================================= */
+.matrix-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.matrix-modal-coverage {
+    padding: 12px 16px;
+    border-radius: var(--matrix-radius-md);
+    border-left: 4px solid;
+}
+
+.matrix-modal-coverage.has-coverage {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: var(--matrix-success);
+}
+
+.matrix-modal-coverage.partial-coverage {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: var(--matrix-warning);
+}
+
+.matrix-modal-coverage.no-coverage {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--matrix-danger);
+}
+
+.coverage-indicator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.coverage-icon {
+    font-size: 24px;
+}
+
+.coverage-status {
+    font-weight: 500;
+}
+
+/* Инфо-блоки */
+.matrix-modal-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-row {
+    display: flex;
+    gap: 12px;
+}
+
+.info-label {
+    min-width: 100px;
+    color: var(--matrix-text-secondary);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-value {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.info-tag {
+    padding: 4px 10px;
+    border-radius: var(--matrix-radius-sm);
+    font-size: 12px;
+}
+
+.tactic-tag {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.platform-tag {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--matrix-success);
+}
+
+.more-tag {
+    background: rgba(156, 163, 175, 0.2);
+    color: var(--matrix-text-muted);
+    font-weight: 600;
+}
+
+/* Описание */
+.matrix-modal-description {
+    padding: 12px;
+    background: rgba(45, 49, 66, 0.3);
+    border-radius: var(--matrix-radius-sm);
+}
+
+.description-label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.description-text {
+    color: var(--matrix-text-secondary);
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* Быстрые действия */
+.matrix-modal-quick-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.quick-action-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    background: rgba(45, 49, 66, 0.5);
+    border: 1px solid var(--matrix-border);
+    border-radius: var(--matrix-radius-sm);
+    cursor: pointer;
+    transition: var(--matrix-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    color: white;
+}
+
+.quick-action-btn:hover {
+    background: rgba(45, 49, 66, 0.8);
+    border-color: var(--matrix-brand-primary);
+    color: var(--matrix-brand-primary);
+}
+
+/* Комментарии */
+.matrix-modal-comments {
+    border-top: 2px solid var(--matrix-border);
+    padding-top: 16px;
+}
+
+.comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.comments-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-add-comment {
+    padding: 8px 16px;
+    background: var(--matrix-brand-primary);
+    color: white;
+    border: none;
+    border-radius: var(--matrix-radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--matrix-transition);
+}
+
+.btn-add-comment:hover {
+    background: var(--matrix-brand-secondary);
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    background: rgba(45, 49, 66, 0.3);
+    border-radius: var(--matrix-radius-md);
+    padding: 12px;
+    border: 1px solid var(--matrix-border);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.comment-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.author-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: var(--matrix-text-muted);
+}
+
+.comment-content {
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* =============================================================================
+   АДАПТИВНЫЙ ДИЗАЙН
+   ============================================================================= */
+@media (max-width: 1200px) {
+    .matrix-table {
+        border-spacing: 12px;
+    }
+
+    .tactic-header,
+    .tactic-column {
+        width: 220px;
+        min-width: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .matrix-table {
+        border-spacing: 8px;
+    }
+
+    .tactic-header,
+    .tactic-column {
+        width: 200px;
+        min-width: 200px;
+    }
+
+    .tactic-header {
+        padding: 0.625rem 0.875rem;
+    }
+
+    .technique-cell {
+        padding: 0.75rem;
+        min-height: 68px;
+    }
+
+    .filters-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .matrix-statistics {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =============================================================================
+   МОДАЛЬНОЕ ОКНО ПОДТЕХНИК - ИСПРАВЛЕННЫЕ СТИЛИ (УВЕЛИЧЕННЫЕ)
+   ============================================================================= */
+
+.matrix-modal-subtechniques-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+/* Красивый скроллбар */
+.matrix-modal-subtechniques-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.matrix-modal-subtechniques-list::-webkit-scrollbar-track {
+    background: rgba(45, 49, 66, 0.3);
+    border-radius: 4px;
+}
+
+.matrix-modal-subtechniques-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--matrix-brand-primary) 0%, var(--matrix-brand-secondary) 100%);
+    border-radius: 4px;
+}
+
+.matrix-modal-subtechniques-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--matrix-brand-secondary) 0%, var(--matrix-brand-primary) 100%);
+}
+
+/* ИСПРАВЛЕННЫЕ КАРТОЧКИ ПОДТЕХНИК - УВЕЛИЧЕННЫЕ */
+.subtechnique-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    /* Увеличено с 14px 16px */
+    min-height: 76px;
+    /* Увеличено для большей высоты */
+    background: linear-gradient(135deg, rgba(45, 49, 66, 0.5) 0%, rgba(37, 41, 56, 0.5) 100%);
+    border: 1px solid var(--matrix-border);
+    border-left: 4px solid transparent;
+    /* Увеличено с 3px */
+    border-radius: var(--matrix-radius-md);
+    cursor: pointer;
+    transition: var(--matrix-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.subtechnique-list-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--matrix-brand-primary) 0%, var(--matrix-brand-secondary) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.subtechnique-list-item:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+    border-color: var(--matrix-brand-primary);
+    transform: translateX(8px);
+    /* Увеличено с 6px */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    /* Усилена тень */
+}
+
+.subtechnique-list-item:hover::before {
+    opacity: 1;
+}
+
+/* Стили для подтехник с покрытием */
+.subtechnique-list-item:has(.coverage-badge.active) {
+    border-left-color: var(--matrix-success);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(37, 41, 56, 0.5) 100%);
+}
+
+.subtechnique-list-item:has(.coverage-badge.inactive) {
+    border-left-color: var(--matrix-danger);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(37, 41, 56, 0.5) 100%);
+}
+
+.subtechnique-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Увеличено с 6px */
+}
+
+.subtechnique-id {
+    font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    /* Увеличено с 12px */
+    font-weight: 700;
+    color: var(--matrix-brand-primary);
+    letter-spacing: 0.5px;
+    /* Увеличено с 0.3px */
+    text-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
+}
+
+.subtechnique-name {
+    font-weight: 500;
+    color: var(--matrix-text-primary);
+    font-size: 15px;
+    /* Увеличено с 14px */
+    line-height: 1.5;
+    /* Увеличено с 1.4 */
+}
+
+.subtechnique-coverage {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Увеличено с 8px */
+    margin-left: 16px;
+    /* Добавлен отступ слева */
+}
+
+/* УВЕЛИЧЕННЫЕ БЕЙДЖИ */
+.coverage-badge {
+    padding: 6px 14px;
+    /* Увеличено с 4px 10px */
+    border-radius: var(--matrix-radius-sm);
+    font-size: 13px;
+    /* Увеличено с 12px */
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Увеличено с 4px */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    min-width: 60px;
+    /* Добавлена минимальная ширина */
+    justify-content: center;
+}
+
+.coverage-badge.active {
+    background: linear-gradient(135deg, var(--matrix-success) 0%, #059669 100%);
+    color: white;
+}
+
+.coverage-badge.inactive {
+    background: linear-gradient(135deg, var(--matrix-danger) 0%, #dc2626 100%);
+    color: white;
+}
+
+/* =============================================================================
+   МОДАЛЬНОЕ ОКНО ПРАВИЛ - ТАКЖЕ УВЕЛИЧЕННЫЕ
+   ============================================================================= */
+
+.matrix-modal-rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.matrix-modal-rules-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.matrix-modal-rules-list::-webkit-scrollbar-track {
+    background: rgba(45, 49, 66, 0.3);
+    border-radius: 4px;
+}
+
+.matrix-modal-rules-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--matrix-success) 0%, #059669 100%);
+    border-radius: 4px;
+}
+
+.rule-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    /* Увеличено */
+    min-height: 80px;
+    /* Увеличено */
+    background: linear-gradient(135deg, rgba(45, 49, 66, 0.5) 0%, rgba(37, 41, 56, 0.5) 100%);
+    border: 1px solid var(--matrix-border);
+    border-left: 4px solid var(--matrix-success);
+    /* Увеличено с 3px */
+    border-radius: var(--matrix-radius-md);
+    cursor: pointer;
+    transition: var(--matrix-transition);
+    position: relative;
+}
+
+.rule-list-item:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%);
+    border-color: var(--matrix-success);
+    transform: translateX(8px);
+    /* Увеличено */
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+}
+
+.rule-list-item.inactive {
+    border-left-color: var(--matrix-text-muted);
+    opacity: 0.7;
+}
+
+.rule-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Увеличено */
+}
+
+.rule-name {
+    font-weight: 500;
+    color: var(--matrix-text-primary);
+    font-size: 15px;
+    /* Увеличено с 14px */
+    line-height: 1.5;
+}
+
+.rule-id {
+    font-size: 13px;
+    /* Увеличено с 12px */
+    color: var(--matrix-text-muted);
+    font-family: 'Courier New', monospace;
+}
+
+.rule-badges {
+    display: flex;
+    gap: 10px;
+    /* Увеличено */
+    align-items: center;
+    margin-left: 16px;
+    /* Добавлен отступ */
+}
+
+.severity-badge {
+    padding: 5px 12px;
+    /* Увеличено */
+    border-radius: var(--matrix-radius-sm);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.severity-low {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.severity-medium {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.severity-high {
+    background: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+    border: 1px solid rgba(249, 115, 22, 0.4);
+}
+
+.severity-critical {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.status-indicator {
+    font-size: 18px;
+    /* Увеличено */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-indicator.active {
+    color: var(--matrix-success);
+}
+
+.status-indicator.inactive {
+    color: var(--matrix-text-muted);
+}
+
+/* =============================================================================
+   АНИМАЦИИ
+   ============================================================================= */
+
+.subtechnique-list-item,
+.rule-list-item {
+    animation: fadeInSlide 0.3s ease-out;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Анимация с задержкой для каждого элемента */
+.subtechnique-list-item:nth-child(1),
+.rule-list-item:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.subtechnique-list-item:nth-child(2),
+.rule-list-item:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.subtechnique-list-item:nth-child(3),
+.rule-list-item:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.subtechnique-list-item:nth-child(4),
+.rule-list-item:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.subtechnique-list-item:nth-child(5),
+.rule-list-item:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+/* =============================================================================
+   АДАПТИВНОСТЬ ДЛЯ МОДАЛЬНЫХ ОКОН
+   ============================================================================= */
+
+@media (max-width: 768px) {
+
+    .subtechnique-list-item,
+    .rule-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .subtechnique-coverage,
+    .rule-badges {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

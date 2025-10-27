@@ -1,0 +1,74 @@
+[Unit]
+Description=MITRE ATT&CK Matrix API - Pangeo Radar Integration
+Documentation=https://docs.pangeoradar.ru
+After=network-online.target mysql.service mariadb.service
+Wants=network-online.target
+Requires=mysql.service
+
+[Service]
+Type=notify
+User=root
+Group=root
+WorkingDirectory=/opt/mitre-matrix
+
+# Переменные окружения
+Environment="PATH=/opt/mitre-matrix/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PYTHONPATH=/opt/mitre-matrix"
+Environment="PYTHONUNBUFFERED=1"
+Environment="FLASK_ENV=production"
+
+# Команда запуска через Gunicorn
+ExecStart=/opt/mitre-matrix/venv/bin/gunicorn \
+    --workers 4 \
+    --threads 2 \
+    --worker-class gthread \
+    --bind 0.0.0.0:5000 \
+    --timeout 120 \
+    --graceful-timeout 30 \
+    --keep-alive 5 \
+    --max-requests 1000 \
+    --max-requests-jitter 50 \
+    --access-logfile /opt/mitre-matrix/logs/access.log \
+    --error-logfile /opt/mitre-matrix/logs/error.log \
+    --log-level info \
+    --pid /opt/mitre-matrix/logs/gunicorn.pid \
+    wsgi:app
+
+# Перезапуск
+Restart=always
+RestartSec=5
+StartLimitInterval=300
+StartLimitBurst=5
+
+# Graceful restart
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Логирование
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=pangeo-matrix
+
+# Безопасность
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/mitre-matrix/logs
+ReadWritePaths=/opt/mitre-matrix/uploads
+
+# Ограничения ресурсов
+LimitNOFILE=65536
+LimitNPROC=4096
+MemoryLimit=4G
+CPUQuota=80%
+
+# Условия запуска
+ConditionPathExists=/opt/mitre-matrix
+ConditionPathExists=/opt/mitre-matrix/venv/bin/gunicorn
+ConditionPathExists=/opt/mitre-matrix/wsgi.py
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,215 @@
+/* ============================================================================
+ * STATISTICS PAGE - ADDITIONAL STYLES
+ * Дополнительные стили для statistics.js (минимальные!)
+ * ============================================================================ */
+
+/* Coverage Bar Colors */
+.coverage-bar.active {
+    background: linear-gradient(90deg, var(--color-success), var(--accent-green-dark));
+}
+
+.coverage-bar.warning {
+    background: linear-gradient(90deg, var(--color-warning), var(--accent-orange-dark));
+}
+
+.coverage-bar.inactive {
+    background: linear-gradient(90deg, var(--color-error), var(--accent-red-dark));
+}
+
+/* Small adjustments for statistics page */
+.statistics-grid .statistics-card {
+    min-height: 400px;
+}
+
+.statistics-card-body table tr:last-child {
+    border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .statistics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   📊 ФИКСИРОВАННАЯ СТАТИСТИКА
+   ======================================== */
+
+.matrix-statistics-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg-primary, #ffffff);
+    padding: 16px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.matrix-statistics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 0 20px;
+}
+
+/* ========================================
+   🔝 ВЕРХНИЙ СКРОЛЛБАР
+   ======================================== */
+
+.matrix-top-scrollbar-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 20px;
+    background: var(--bg-secondary, #f8f9fa);
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.matrix-top-scrollbar-content {
+    height: 1px;
+    background: transparent;
+}
+
+/* Стилизация скроллбара */
+.matrix-top-scrollbar-wrapper::-webkit-scrollbar {
+    height: 12px;
+}
+
+.matrix-top-scrollbar-wrapper::-webkit-scrollbar-track {
+    background: var(--bg-tertiary, #e9ecef);
+    border-radius: 6px;
+}
+
+.matrix-top-scrollbar-wrapper::-webkit-scrollbar-thumb {
+    background: var(--brand-primary, #6366f1);
+    border-radius: 6px;
+}
+
+.matrix-top-scrollbar-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-primary-dark, #4f46e5);
+}
+
+/* ========================================
+   📋 STICKY HEADER
+   ======================================== */
+
+.matrix-wrapper {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-primary, #ffffff);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.matrix-scroll-container {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+}
+
+.matrix-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* 🔧 STICKY THEAD */
+.matrix-thead-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-primary, #ffffff);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.matrix-thead-sticky th {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    padding: 16px 12px;
+    text-align: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+    min-width: 160px;
+}
+
+.matrix-thead-sticky th:last-child {
+    border-right: none;
+}
+
+.tactic-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tactic-id {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+}
+
+.tactic-name {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* ========================================
+   📱 АДАПТИВНОСТЬ
+   ======================================== */
+
+@media (max-width: 1200px) {
+    .matrix-wrapper {
+        height: calc(100vh - 100px);
+    }
+
+    .matrix-statistics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .matrix-thead-sticky th {
+        min-width: 140px;
+        padding: 12px 8px;
+    }
+
+    .tactic-name {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .matrix-wrapper {
+        height: calc(100vh - 100px);
+    }
+
+    .matrix-statistics {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .matrix-statistics-wrapper {
+        padding: 12px 0;
+    }
+
+    .matrix-thead-sticky th {
+        min-width: 120px;
+        padding: 10px 6px;
+    }
+
+    .tactic-id {
+        font-size: 10px;
+    }
+
+    .tactic-name {
+        font-size: 11px;
+    }
+}

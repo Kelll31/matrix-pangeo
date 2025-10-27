@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+    <script>
+        (async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+
+            try {
+                const response = await fetch('http://172.30.250.199:5000/api/users/check-auth', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Bearer ${token}` : ''
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!data.success || !data.data.authenticated) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                localStorage.removeItem('authToken');
+                window.location.href = '/login.html';
+            }
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MITRE ATT&CK Matrix v10.1</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/matrix_styles.css">
+    <link rel="stylesheet" href="css/rules_styles.css">
+    <link rel="stylesheet" href="css/rule_modal.css">
+    <link rel="stylesheet" href="css/statistics_additional.css">
+    <link rel="stylesheet" href="css/technique_modal.css">
+    <link rel="stylesheet" href="css/audit.css">
+    <link rel="stylesheet" href="css/users.css">
+</head>
+
+<body>
+    <div id="app" class="app">
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <!-- SIDEBAR TOGGLE BUTTON -->
+            <button class="navbar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- NAVBAR BRAND -->
+            <div class="navbar-brand">
+                <div class="navbar-logo">
+                    <i class="fas fa-shield-alt navbar-logo-icon"></i>
+                    <div class="navbar-logo-text">
+                        <span class="navbar-title">MITRE ATT&CK</span>
+                        <span class="navbar-subtitle">Matrix v10.1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NAVBAR SEARCH -->
+            <div class="navbar-search">
+                <div class="search-container">
+                    <button class="search-btn" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <input type="text" class="search-input" placeholder="Поиск техник, тактик, правил..."
+                        id="globalSearch">
+                </div>
+            </div>
+
+            <!-- NAVBAR STATS -->
+            <!-- <div class="navbar-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="navTotalTechniques">0</span>
+                    <span class="stat-label">ПОКРЫТО</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-value" id="navTotalRules">0</span>
+                    <span class="stat-label">ПРАВИЛА</span>
+                </div>
+            </div> -->
+
+            <!-- NAVBAR ACTIONS -->
+            <div class="navbar-actions">
+                <button class="navbar-btn" id="downloadBtn" title="Экспорт">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="navbar-btn" id="refreshBtn" title="Обновить">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+
+            <!-- NAVBAR USER -->
+            <div class="navbar-user">
+                <button class="navbar-user-btn" id="userMenuBtn">
+                    <i class="fas fa-user"></i>
+                    <span class="navbar-user-name">Admin</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="navbar-dropdown" id="userDropdown">
+                    <!-- <a href="#" class="dropdown-item">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Профиль</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Настройки</span>
+                    </a> 
+                    <div class="dropdown-divider"></div>-->
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Выход</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- ОСНОВНОЕ -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">ОСНОВНОЕ</div>
+                    <nav class="sidebar-nav">
+                        <a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                            <i class="sidebar-icon fas fa-tachometer-alt"></i>
+                            <span class="sidebar-text">Дашборд</span>
+                        </a>
+                        <a href="#matrix" class="sidebar-link" data-section="matrix">
+                            <i class="sidebar-icon fas fa-th"></i>
+                            <span class="sidebar-text">Матрица техник</span>
+                        </a>
+                        <a href="#techniques" class="sidebar-link" data-section="techniques">
+                            <i class="sidebar-icon fas fa-layer-group"></i>
+                            <span class="sidebar-text">Список техник</span>
+                        </a>
+                        <a href="#rules" class="sidebar-link" data-section="rules">
+                            <i class="sidebar-icon fas fa-code-branch"></i>
+                            <span class="sidebar-text">Правила корреляции</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- АНАЛИТИКА -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">АНАЛИТИКА</div>
+                    <nav class="sidebar-nav">
+                        <a href="#statistics" class="sidebar-link" data-section="statistics">
+                            <i class="sidebar-icon fas fa-chart-bar"></i>
+                            <span class="sidebar-text">Статистика</span>
+                        </a>
+                        <a href="#coverage" class="sidebar-link" data-section="coverage">
+                            <i class="sidebar-icon fas fa-shield-alt"></i>
+                            <span class="sidebar-text">Покрытие</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- УПРАВЛЕНИЕ -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">УПРАВЛЕНИЕ</div>
+                    <nav class="sidebar-nav">
+                        <a href="#comments" class="sidebar-link" data-section="comments">
+                            <i class="sidebar-icon fas fa-comments"></i>
+                            <span class="sidebar-text">Комментарии</span>
+                        </a>
+                        <a href="#audit" class="sidebar-link" data-section="audit">
+                            <i class="sidebar-icon fas fa-history"></i>
+                            <span class="sidebar-text">Аудит</span>
+                        </a>
+                        <a href="#users" class="sidebar-link" data-section="users">
+                            <i class="sidebar-icon fas fa-users"></i>
+                            <span class="sidebar-text">Пользователи</span>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- API Status -->
+            <div class="sidebar-footer">
+                <div class="api-status">
+                    <div class="api-status-indicator">
+                        <div class="status-dot status-success"></div>
+                        <span class="status-text">API Online</span>
+                    </div>
+                    <div class="api-version">v10.1</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="content-header">
+                    <h1 class="content-title">
+                        <i class="content-title-icon fas fa-tachometer-alt"></i>
+                        Дашборд
+                    </h1>
+                    <div class="content-actions">
+                        <button class="btn btn-secondary" onclick="Dashboard.exportDashboard()">
+                            <i class="fas fa-download"></i> Экспорт
+                        </button>
+                        <button class="btn btn-primary" onclick="Dashboard.refresh()">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-body">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card stat-card-blue">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-value" id="statTechniques">3</div>
+                                <div class="stat-card-label">ВСЕГО ТЕХНИК</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-card-green">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-value" id="statCovered">3</div>
+                                <div class="stat-card-label">ПОКРЫТО ПРАВИЛАМИ</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-card-orange">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-value" id="statRules">744</div>
+                                <div class="stat-card-label">ПРАВИЛА КОРРЕЛЯЦИИ</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-card-red">
+                            <div class="stat-card-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="stat-card-value" id="statComments">0</div>
+                                <div class="stat-card-label">КОММЕНТАРИЕВ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Feed -->
+                    <div class="activity-section">
+                        <div class="activity-header">
+                            <h2 class="activity-title">
+                                <i class="fas fa-history"></i>
+                                Последняя активность
+                            </h2>
+                            <button class="btn btn-sm btn-ghost" onclick="Dashboard.refreshActivity()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        <div class="activity-content" id="dashboardActivity">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Загрузка активности...</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Matrix Section -->
+            <section id="matrix" class="content-section">
+                <div class="content-header">
+                    <h1 class="content-title"> <i class="content-title-icon fas fa-th"></i> Матрица АТТ&CK </h1>
+                    <div class="matrix-scrollbar-top" id="matrixScrollbarTop">
+                        <div class="matrix-scrollbar-top-content"></div>
+                    </div>
+                    <div class="content-actions"> <button id="toggleFiltersBtn" class="btn btn-secondary"> <i
+                                class="fas fa-filter"></i> Фильтры </button> <button id="exportMatrixBtn"
+                            class="btn btn-primary"> <i class="fas fa-download"></i> Экспорт </button> </div>
+                </div>
+                <!-- Контейнер фильтров -->
+                <div id="matrix-filters-container" class="content-body"></div>
+
+                <!-- Контейнер статистики -->
+                <div id="matrix-statistics-container" class="content-body"></div>
+
+                <!-- Основной контейнер матрицы -->
+                <div id="matrix-container" class="content-body">
+                    <div class="matrix-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Загрузка матрицы...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Techniques Section -->
+            <section id="techniques" class="content-section">
+                <div class="content-header">
+                    <h1 class="content-title">
+                        <i class="content-title-icon fas fa-layer-group"></i>
+                        Список техник
+                    </h1>
+                    <div class="content-actions">
+                        <input type="text" class="search-input-sm" placeholder="Поиск..."
+                            onkeyup="Techniques.search(this.value)">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-filter"></i> Фильтры
+                        </button>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Добавить
+                        </button>
+                    </div>
+                </div>
+
+                <div id="techniquesFilters"></div>
+
+                <div class="content-body" id="techniquesContainer">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Загрузка техник...</span>
+                </div>
+
+                <div id="techniquesPagination"></div>
+            </section>
+
+            <!-- Rules Section -->
+            <section id="rules" class="content-section">
+                <!-- Header with Actions -->
+                <div class="content-header">
+                    <div>
+                        <h1 class="content-title">
+                            <i class="content-title-icon fas fa-shield-alt"></i>
+                            Правила корреляции
+                        </h1>
+                    </div>
+                    <div class="content-actions">
+                        <button id="rules-advanced-search-btn" class="btn btn-outline-secondary"
+                            title="Расширенный поиск">
+                            <i class="fas fa-sliders-h"></i>
+                            <span class="btn-label">Расширенный поиск</span>
+                        </button>
+                        <button id="rules-export-btn" class="btn btn-outline-secondary" title="Экспортировать">
+                            <i class="fas fa-download"></i>
+                            <span class="btn-label">Экспорт</span>
+                        </button>
+                        <button id="rules-refresh-btn" class="btn btn-outline-secondary" title="Обновить">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button id="rules-add-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Добавить правило
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div id="rules-statistics" class="rules-statistics">
+                    <!-- Statistics will be rendered by JavaScript -->
+                </div>
+
+                <!-- Quick Filters Summary -->
+                <div id="filter-summary" class="filter-summary-panel" style="display: none;">
+                    <!-- Active filters summary will be rendered here -->
+                </div>
+
+                <!-- Main Filters Panel -->
+                <div class="rules-filters">
+                    <!-- Basic Filters Row -->
+                    <div class="filters-basic">
+                        <!-- Search -->
+                        <div class="filter-field filter-field-search">
+                            <label class="filter-label"><i class="fas fa-search"></i> Поиск</label>
+                            <input type="text" id="rulesSearchInput" class="form-control"
+                                placeholder="Название, описание, ID техники, автор, ID правила...">
+                        </div>
+
+                        <!-- Severity Filter -->
+                        <div class="filter-field">
+                            <label class="filter-label"><i class="fas fa-exclamation-triangle"></i> Критичность</label>
+                            <select id="rulesSeverityFilter" class="form-select">
+                                <option value="all">Все</option>
+                                <option value="low">Низкая</option>
+                                <option value="medium">Средняя</option>
+                                <option value="high">Высокая</option>
+                                <option value="critical">Критическая</option>
+                            </select>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="filter-field">
+                            <label class="filter-label"><i class="fas fa-toggle-on"></i> Статус</label>
+                            <select id="rulesStatusFilter" class="form-select">
+                                <option value="all">Все</option>
+                                <option value="active">Активно</option>
+                                <option value="disabled">Отключено</option>
+                                <option value="draft">Черновик</option>
+                                <option value="archived">Архив</option>
+                            </select>
+                        </div>
+
+                        <!-- Active/Inactive Filter -->
+                        <div class="filter-field">
+                            <label class="filter-label"><i class="fas fa-power-off"></i> Активность</label>
+                            <select id="rulesActiveFilter" class="form-select">
+                                <option value="all">Все</option>
+                                <option value="active">Активные</option>
+                                <option value="inactive">Неактивные</option>
+                            </select>
+                        </div>
+
+                        <!-- Reset Button -->
+                        <div class="filter-field filter-field-button">
+                            <label class="filter-label">&nbsp;</label>
+                            <button id="rulesResetFilters" class="btn btn-outline-secondary" style="width: 100%;">
+                                <i class="fas fa-times"></i> Сбросить
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Filters Row (Hidden by default) -->
+                    <div id="rules-advanced-filters" class="filters-advanced" style="display: none;">
+                        <div class="filter-field">
+                            <label class="filter-label"><i class="fas fa-user"></i> Автор</label>
+                            <select id="rulesAuthorFilter" class="form-select">
+                                <option value="all">Все авторы</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field">
+                            <label class="filter-label"><i class="fas fa-calendar"></i> Период</label>
+                            <select id="rulesDateRangeFilter" class="form-select">
+                                <option value="all">За все время</option>
+                                <option value="today">Сегодня</option>
+                                <option value="week">За неделю</option>
+                                <option value="month">За месяц</option>
+                                <option value="quarter">За квартал</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field">
+                            <label class="filter-label"><i class="fas fa-comments"></i> Комментарии</label>
+                            <select id="rulesCommentsFilter" class="form-select">
+                                <option value="all">Все</option>
+                                <option value="yes">С комментариями</option>
+                                <option value="no">Без комментариев</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field">
+                            <label class="filter-label"><i class="fas fa-flask"></i> Тесты</label>
+                            <select id="rulesTestsFilter" class="form-select">
+                                <option value="all">Все</option>
+                                <option value="yes">С тестами</option>
+                                <option value="no">Без тестов</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-field filter-field-sort">
+                            <label class="filter-label"><i class="fas fa-sort"></i> Сортировка</label>
+                            <div class="sort-controls">
+                                <select id="rulesSortFilter" class="form-select">
+                                    <option value="updated_at">По обновлению</option>
+                                    <option value="created_at">По созданию</option>
+                                    <option value="name">По названию</option>
+                                    <option value="severity">По критичности</option>
+                                    <option value="author">По автору</option>
+                                    <option value="comments">По комментариям</option>
+                                </select>
+                                <button id="rulesSortOrderBtn" class="btn btn-sm btn-outline-secondary" type="button"
+                                    title="Изменить порядок">
+                                    <i class="fas fa-sort-amount-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Body -->
+                <div class="content-body">
+                    <!-- Rules List Container -->
+                    <div id="rules-list-container" class="rules-list-container">
+                        <!-- Loading State (will be replaced by JavaScript) -->
+                        <div class="loading-container">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Загрузка правил...</span>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="rules-pagination" class="pagination-footer">
+                        <!-- Pagination will be rendered by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+
+
+
+
+            <!-- Statistics Section -->
+            <section id="statistics" class="content-section">
+                <div class="content-header">
+                    <h1 class="content-title">
+                        <i class="content-title-icon fas fa-chart-bar"></i>
+                        Статистика
+                    </h1>
+                    <div class="content-actions">
+                        <button class="btn btn-secondary" onclick="Statistics.exportData('csv')">
+                            <i class="fas fa-file-csv"></i> Экспорт CSV
+                        </button>
+                        <button class="btn btn-secondary" onclick="Statistics.exportData('json')">
+                            <i class="fas fa-file-code"></i> Экспорт JSON
+                        </button>
+                        <button class="btn btn-primary" onclick="Statistics.refresh()">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-body">
+                    <!-- Контейнер для статистики -->
+                    <div id="statisticsContent">
+                        <!-- Сюда будет отрисована статистика -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coverage Section -->
+            <section id="coverage" class="content-section">
+                <div class="content-header">
+                    <h1 class="content-title">
+                        <i class="content-title-icon fas fa-shield-alt"></i>
+                        Покрытие
+                    </h1>
+                    <div class="content-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-body">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Загрузка покрытия...</span>
+                </div>
+            </section>
+
+            <!-- Comments Section -->
+            <section id="comments" class="content-section">
+                <div class="content-header">
+                    <h1 class="content-title">
+                        <i class="content-title-icon fas fa-comments"></i>
+                        Комментарии
+                    </h1>
+                    <div class="content-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Добавить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-body">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Загрузка комментариев...</span>
+                </div>
+            </section>
+
+            <!-- Audit Section -->
+            <section id="audit" class="content-section">
+                <!-- HEADER -->
+                <div class="content-header">
+                    <h1 class="content-title">
+                        <i class="content-title-icon fas fa-history"></i>
+                        Аудит
+                    </h1>
+                    <div class="content-actions">
+                        <button class="btn btn-secondary" id="audit-export-btn" title="Экспорт в CSV">
+                            <i class="fas fa-download"></i> Экспорт
+                        </button>
+                        <button class="btn btn-secondary" id="audit-export-json-btn" title="Экспорт в JSON">
+                            <i class="fas fa-file-code"></i> JSON
+                        </button>
+                        <button class="btn btn-primary" id="audit-refresh-btn" title="Обновить данные">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-body">
+                    <!-- DASHBOARD SECTION -->
+                    <div class="audit-dashboard-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-chart-pie"></i> Dashboard</h2>
+                            <div class="section-actions">
+                                <select id="audit-timeframe-select" class="select-sm">
+                                    <option value="1h">1 час</option>
+                                    <option value="6h">6 часов</option>
+                                    <option value="12h">12 часов</option>
+                                    <option value="24h" selected>24 часа</option>
+                                    <option value="7d">7 дней</option>
+                                    <option value="30d">30 дней</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="audit-dashboard" class="dashboard-container">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Загрузка dashboard...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STATISTICS SUMMARY -->
+                    <div class="audit-stats-section">
+                        <div id="audit-stats-summary" class="stats-summary">
+                            <!-- Stats will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- FILTERS SECTION -->
+                    <div class="audit-filters-section">
+                        <div class="filters-header">
+                            <h3><i class="fas fa-filter"></i> Фильтры</h3>
+                            <button class="btn btn-sm btn-secondary" id="audit-clear-filters-btn">
+                                <i class="fas fa-eraser"></i> Очистить
+                            </button>
+                        </div>
+                        <div class="filters-grid">
+                            <!-- Search -->
+                            <div class="filter-group">
+                                <label for="audit-search">
+                                    <i class="fas fa-search"></i> Поиск
+                                </label>
+                                <input type="text" id="audit-search" class="form-input"
+                                    placeholder="Поиск по описанию, типу...">
+                            </div>
+
+                            <!-- Level Filter -->
+                            <div class="filter-group">
+                                <label for="audit-level-filter">
+                                    <i class="fas fa-layer-group"></i> Уровень
+                                </label>
+                                <select id="audit-level-filter" class="form-select">
+                                    <option value="all">Все уровни</option>
+                                    <option value="DEBUG">DEBUG</option>
+                                    <option value="INFO">INFO</option>
+                                    <option value="WARN">WARN</option>
+                                    <option value="ERROR">ERROR</option>
+                                    <option value="CRITICAL">CRITICAL</option>
+                                    <option value="SECURITY">SECURITY</option>
+                                </select>
+                            </div>
+
+                            <!-- Event Type Filter -->
+                            <div class="filter-group">
+                                <label for="audit-event-type-filter">
+                                    <i class="fas fa-tags"></i> Тип события
+                                </label>
+                                <select id="audit-event-type-filter" class="form-select">
+                                    <option value="all">Все типы</option>
+                                    <option value="login">Вход в систему</option>
+                                    <option value="logout">Выход</option>
+                                    <option value="create">Создание</option>
+                                    <option value="update">Обновление</option>
+                                    <option value="delete">Удаление</option>
+                                    <option value="export">Экспорт</option>
+                                    <option value="import">Импорт</option>
+                                    <option value="config_change">Изменение конфигурации</option>
+                                </select>
+                            </div>
+
+                            <!-- Date From -->
+                            <div class="filter-group">
+                                <label for="audit-date-from">
+                                    <i class="fas fa-calendar-alt"></i> Дата от
+                                </label>
+                                <input type="date" id="audit-date-from" class="form-input">
+                            </div>
+
+                            <!-- Date To -->
+                            <div class="filter-group">
+                                <label for="audit-date-to">
+                                    <i class="fas fa-calendar-check"></i> Дата до
+                                </label>
+                                <input type="date" id="audit-date-to" class="form-input">
+                            </div>
+
+                            <!-- Risk Min -->
+                            <div class="filter-group">
+                                <label for="audit-risk-min">
+                                    <i class="fas fa-exclamation-triangle"></i> Мин. риск:
+                                    <span id="audit-risk-min-label">0</span>
+                                </label>
+                                <input type="range" id="audit-risk-min" class="form-range" min="0" max="100" value="0">
+                            </div>
+
+                            <!-- Risk Max -->
+                            <div class="filter-group">
+                                <label for="audit-risk-max">
+                                    <i class="fas fa-exclamation-circle"></i> Макс. риск:
+                                    <span id="audit-risk-max-label">100</span>
+                                </label>
+                                <input type="range" id="audit-risk-max" class="form-range" min="0" max="100"
+                                    value="100">
+                            </div>
+
+                            <!-- Auto Refresh -->
+                            <div class="filter-group">
+                                <label for="audit-auto-refresh">
+                                    <input type="checkbox" id="audit-auto-refresh" class="form-checkbox">
+                                    <i class="fas fa-sync"></i> Авто-обновление (30с)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AUDIT LOGS LIST -->
+                    <div class="audit-logs-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-list"></i> Записи аудита</h3>
+                        </div>
+                        <div id="audit-logs-container" class="audit-logs-list">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Загрузка логов...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAGINATION -->
+                    <div id="audit-pagination" class="pagination-container">
+                        <!-- Pagination will be rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="content-section">
+                <!-- HEADER -->
+                <div class="content-header">
+                    <h1 class="content-title">
+                        <i class="content-title-icon fas fa-users"></i>
+                        Пользователи
+                    </h1>
+                    <div class="content-actions">
+                        <button class="btn btn-secondary" id="users-refresh-btn" title="Обновить">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                        <button class="btn btn-primary" id="users-add-btn" title="Добавить пользователя">
+                            <i class="fas fa-user-plus"></i> Добавить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="content-body">
+                    <!-- STATISTICS -->
+                    <div class="users-stats-section">
+                        <div id="users-stats-container" class="stats-container">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Загрузка статистики...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FILTERS -->
+                    <div class="users-filters-section">
+                        <div class="filters-header">
+                            <h3><i class="fas fa-filter"></i> Фильтры</h3>
+                            <button class="btn btn-sm btn-secondary" id="users-clear-filters-btn">
+                                <i class="fas fa-eraser"></i> Очистить
+                            </button>
+                        </div>
+                        <div class="filters-grid">
+                            <!-- Search -->
+                            <div class="filter-group">
+                                <label for="users-search">
+                                    <i class="fas fa-search"></i> Поиск
+                                </label>
+                                <input type="text" id="users-search" class="form-input"
+                                    placeholder="Поиск по имени, email...">
+                            </div>
+
+                            <!-- Role Filter -->
+                            <div class="filter-group">
+                                <label for="users-role-filter">
+                                    <i class="fas fa-user-tag"></i> Роль
+                                </label>
+                                <select id="users-role-filter" class="form-select">
+                                    <option value="all">Все роли</option>
+                                    <option value="admin">Администратор</option>
+                                    <option value="analyst">Аналитик</option>
+                                    <option value="viewer">Зритель</option>
+                                </select>
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div class="filter-group">
+                                <label for="users-status-filter">
+                                    <i class="fas fa-toggle-on"></i> Статус
+                                </label>
+                                <select id="users-status-filter" class="form-select">
+                                    <option value="all">Все статусы</option>
+                                    <option value="true">Активные</option>
+                                    <option value="false">Неактивные</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- USERS LIST -->
+                    <div class="users-list-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-list"></i> Список пользователей</h3>
+                        </div>
+                        <div id="users-list-container" class="users-list">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Загрузка пользователей...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAGINATION -->
+                    <div id="users-pagination" class="pagination-container">
+                        <!-- Pagination will be rendered here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal Container -->
+        <div id="modalContainer"></div>
+
+        <!-- Notification Container -->
+        <div id="notificationContainer"></div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-overlay-content">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Загрузка...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // DOM Ready handler
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM готов, запуск приложения...');
+
+            if (window.App) {
+                App.init();
+            } else {
+                console.error('App module not loaded');
+            }
+        });
+    </script>
+
+    <!-- Core Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/sidebar_toggle.js"></script>
+    <script src="js/navbar.js"></script>
+
+    <!-- Components Scripts -->
+    <script src="js/components/comments_widget.js"></script>
+
+    <!-- Modals Scripts -->
+    <script src="js/modals/modal_engine.js"></script>
+    <script src="js/modals/modal_comment.js"></script>
+    <script src="js/modals/modal_rule.js"></script>
+    <script src="js/modals/modal_rule_edit.js"></script>
+    <script src="js/modals/modal_technique.js"></script>
+    <script src="js/modals/modal_templates.js"></script>
+    <script src="js/modals/modal_matrix.js"></script>
+    <script src="js/modals/modal_users.js"></script>
+
+    <!-- Page Modules -->
+    <script src="js/pages/dashboard.js"></script>
+    <script src="js/pages/matrix.js"></script>
+    <script src="js/pages/techniques.js"></script>
+    <script src="js/pages/rules.js"></script>
+    <script src="js/pages/statistics.js"></script>
+    <script src="js/pages/coverage.js"></script>
+    <script src="js/pages/audit.js"></script>
+    <script src="js/pages/users.js"></script>
+    <script src="js/pages/comments.js"></script>
+    <!-- Main App -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>

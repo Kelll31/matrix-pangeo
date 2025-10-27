@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - MITRE ATT&CK Matrix</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+
+    <!-- Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Подключение существующих стилей -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/auth.css">
+
+    <!-- Дополнительные стили для страницы логина -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1f2e 0%, #232937 50%, #2f3749 100%);
+            font-family: var(--font-family-sans);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Анимированный фон */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .login-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
+            padding: var(--space-xl);
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            padding: var(--space-3xl) var(--space-2xl) var(--space-xl);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            font-size: 2.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-header h1 {
+            margin: 0 0 var(--space-sm);
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            letter-spacing: -0.5px;
+        }
+
+        .login-subtitle {
+            margin: 0;
+            opacity: 0.9;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-normal);
+        }
+
+        .login-body {
+            padding: var(--space-3xl) var(--space-2xl);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-xl);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .form-group label i {
+            color: var(--brand-primary);
+            margin-right: var(--space-sm);
+            width: 16px;
+            text-align: center;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: rgba(45, 49, 66, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            transition: all var(--transition-fast);
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            background: rgba(45, 49, 66, 0.7);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: var(--space-sm);
+            transition: color var(--transition-fast);
+            font-size: var(--font-size-base);
+        }
+
+        .password-toggle:hover {
+            color: var(--brand-primary);
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--brand-primary);
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            margin: 0;
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-login:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-login .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        .btn-login.loading .spinner {
+            display: block;
+        }
+
+        .btn-login.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .login-error {
+            padding: var(--space-md) var(--space-lg);
+            background: var(--color-error-bg);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--color-error);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-lg);
+            display: none;
+            align-items: center;
+            gap: var(--space-sm);
+            animation: shake 0.5s;
+        }
+
+        .login-error.show {
+            display: flex;
+        }
+
+        .login-success {
+            padding: var(--space-md) var(--space-lg);
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-md);
+            color: #10b981;
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-lg);
+            display: none;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .login-success.show {
+            display: flex;
+        }
+
+        .login-footer {
+            padding: var(--space-xl) var(--space-2xl);
+            border-top: 1px solid var(--border-color);
+            background: rgba(45, 49, 66, 0.3);
+        }
+
+        .login-hint {
+            margin: 0 0 var(--space-md);
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .login-hint i {
+            color: var(--brand-primary);
+        }
+
+        .login-hint strong {
+            color: var(--text-primary);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .login-warning {
+            margin: 0;
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            text-align: center;
+            padding: var(--space-sm);
+            background: rgba(239, 68, 68, 0.05);
+            border-radius: var(--radius-sm);
+        }
+
+        .login-warning i {
+            color: var(--color-error);
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-wrapper {
+                padding: var(--space-md);
+            }
+
+            .login-header {
+                padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+            }
+
+            .login-logo {
+                width: 64px;
+                height: 64px;
+                font-size: 2rem;
+            }
+
+            .login-header h1 {
+                font-size: var(--font-size-xl);
+            }
+
+            .login-body {
+                padding: var(--space-2xl) var(--space-lg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1>MITRE ATT&CK Matrix</h1>
+                <p class="login-subtitle">Система управления техниками и правилами безопасности</p>
+            </div>
+
+            <!-- Body -->
+            <div class="login-body">
+                <!-- Сообщение об ошибке -->
+                <div id="loginError" class="login-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorMessage"></span>
+                </div>
+
+                <!-- Сообщение об успехе -->
+                <div id="loginSuccess" class="login-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successMessage"></span>
+                </div>
+
+                <!-- Форма входа -->
+                <form id="loginForm" autocomplete="off">
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i>
+                            Имя пользователя
+                        </label>
+                        <input type="text" id="username" name="username" class="form-control"
+                            placeholder="Введите имя пользователя" autocomplete="username" required
+                            autofocus>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i>
+                            Пароль
+                        </label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" class="form-control"
+                                placeholder="Введите пароль" autocomplete="current-password" required>
+                            <button type="button" class="password-toggle" id="togglePassword"
+                                aria-label="Показать пароль">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="form-check">
+                        <input type="checkbox" id="rememberMe" name="rememberMe" class="form-check-input" checked>
+                        <label for="rememberMe" class="form-check-label">
+                            Запомнить меня на 30 дней
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <span class="spinner"></span>
+                        <span class="btn-text">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Войти в систему
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p class="login-hint">
+                    <i class="fas fa-info-circle"></i>
+                    Тестовый доступ: <strong>admin</strong> / <strong>admin</strong>
+                </p>
+                <p class="login-warning">
+                    <i class="fas fa-shield-alt"></i>
+                    Доступ к системе разрешен только авторизованным пользователям
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Logic -->
+    <script>
+        'use strict';
+
+        // =======================================================================
+        // LOGIN PAGE SCRIPT - FIXED VERSION WITH TOKEN SAVING
+        // =======================================================================
+
+        console.log('\n' + '='.repeat(80));
+        console.log('🔐 LOGIN PAGE INITIALIZED');
+        console.log('='.repeat(80));
+
+        // Проверка: если пользователь уже авторизован - редирект
+        (function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            console.log('\n🔍 Pre-login check:');
+            console.log(`   Token exists: ${!!token}`);
+
+            if (token && token.length > 20) {
+                console.log(`✅ Already authenticated, redirecting to index.html`);
+                window.location.href = 'index.html';
+            } else {
+                console.log('❌ No valid token, showing login form');
+            }
+        })();
+
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+        const loginBtn = document.getElementById('loginBtn');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const loginError = document.getElementById('loginError');
+        const errorMessage = document.getElementById('errorMessage');
+        const loginSuccess = document.getElementById('loginSuccess');
+        const successMessage = document.getElementById('successMessage');
+
+        // Toggle Password Visibility
+        togglePasswordBtn.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            const icon = togglePasswordBtn.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+
+        // Show Error
+        function showError(message) {
+            console.warn(`⚠️ Error: ${message}`);
+            errorMessage.textContent = message;
+            loginError.classList.add('show');
+            loginSuccess.classList.remove('show');
+            loginForm.classList.add('shake');
+            setTimeout(() => {
+                loginForm.classList.remove('shake');
+            }, 500);
+        }
+
+        // Hide Error
+        function hideError() {
+            loginError.classList.remove('show');
+        }
+
+        // Show Success
+        function showSuccess(message) {
+            console.log(`✅ Success: ${message}`);
+            successMessage.textContent = message;
+            loginSuccess.classList.add('show');
+            loginError.classList.remove('show');
+        }
+
+        // Form Submit Handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError();
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const remember = rememberMeCheckbox.checked;
+
+            console.log('\n' + '='.repeat(80));
+            console.log('🔐 LOGIN FORM SUBMITTED');
+            console.log('='.repeat(80));
+            console.log(`📝 Username: ${username}`);
+            console.log(`🔑 Password length: ${password.length}`);
+            console.log(`💾 Remember: ${remember}`);
+
+            if (!username || !password) {
+                showError('Пожалуйста, заполните все поля');
+                return;
+            }
+
+            // Loading state
+            loginBtn.disabled = true;
+            loginBtn.classList.add('loading');
+
+            try {
+                console.log('\n📤 Sending login request to API...');
+
+                const apiBaseUrl = window.APP_CONFIG?.apiBaseUrl || 'http://172.30.250.199:5000/api';
+
+                const response = await fetch(`${apiBaseUrl}/users/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        remember: remember
+                    }),
+                    credentials: 'include'
+                });
+
+                console.log(`📥 Response status: ${response.status}`);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('📋 Response data:', data);
+
+                // Проверяем структуру ответа
+                if (data.success && data.data) {
+                    const userData = data.data.user;
+                    const sessionData = data.data.session;
+
+                    if (!sessionData || !sessionData.token) {
+                        throw new Error('Token not received from server');
+                    }
+
+                    console.log('\n✅ Login successful!');
+                    console.log(`   Token: ${sessionData.token.substring(0, 20)}...`);
+                    console.log(`   Token length: ${sessionData.token.length}`);
+                    console.log(`   User: ${userData.username} (${userData.role})`);
+
+                    // ✅ СОХРАНЯЕМ ТОКЕН В localStorage
+                    console.log('\n💾 Saving to localStorage...');
+
+                    localStorage.setItem('authToken', sessionData.token);
+                    console.log(`   ✅ authToken saved`);
+
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    console.log(`   ✅ user saved`);
+
+                    localStorage.setItem('loginTime', new Date().toISOString());
+                    console.log(`   ✅ loginTime saved`);
+
+                    // Проверяем что сохранилось
+                    const savedToken = localStorage.getItem('authToken');
+                    console.log(`\n✅ Verification:`);
+                    console.log(`   Token in localStorage: ${savedToken ? 'YES ✓' : 'NO ✗'}`);
+                    console.log(`   Token length: ${savedToken ? savedToken.length : 0}`);
+
+                    // Показываем успех
+                    showSuccess(`Добро пожаловать, ${userData.full_name || userData.username}!`);
+                    loginBtn.innerHTML = '<i class="fas fa-check-circle"></i> Успешно!';
+                    loginBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+
+                    console.log('\n' + '='.repeat(80));
+                    console.log('✅ LOGIN COMPLETE - REDIRECTING...');
+                    console.log('='.repeat(80) + '\n');
+
+                    // Редирект через 500ms
+                    setTimeout(() => {
+                        console.log('↩️ Redirecting to index.html...\n');
+                        window.location.href = 'index.html';
+                    }, 500);
+
+                } else {
+                    throw new Error(data.error?.message || 'Неверные учетные данные');
+                }
+
+            } catch (error) {
+                console.error('\n❌ Login error:', error.message);
+
+                let errorMsg = 'Ошибка входа. Проверьте данные и попробуйте снова.';
+
+                if (error.message) {
+                    if (error.message.includes('Invalid username or password')) {
+                        errorMsg = 'Неверное имя пользователя или пароль';
+                    } else if (error.message.includes('401')) {
+                        errorMsg = 'Неверное имя пользователя или пароль';
+                    } else if (error.message.includes('403')) {
+                        errorMsg = 'Аккаунт деактивирован';
+                    } else if (error.message.includes('Network') || error.message.includes('Failed to fetch')) {
+                        errorMsg = 'Ошибка подключения к серверу';
+                    } else if (error.message.includes('Invalid token')) {
+                        errorMsg = 'Ошибка сервера при создании токена';
+                    } else {
+                        errorMsg = error.message;
+                    }
+                }
+
+                showError(errorMsg);
+
+                // Reset button
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('loading');
+            }
+        });
+
+        // Auto-focus username input
+        usernameInput.focus();
+
+        // Enter key on username -> focus password
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                passwordInput.focus();
+            }
+        });
+
+        // Enter key on password -> submit
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        console.log('✅ Login form ready\n');
+    </script>
+
+</body>
+
+</html>

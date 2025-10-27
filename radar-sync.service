@@ -1,0 +1,59 @@
+[Unit]
+Description=Radar Sync Service - MITRE ATT&CK Matrix Synchronization with Pangeo Radar Platform
+Documentation=https://docs.pangeoradar.ru
+After=network-online.target mysql.service mariadb.service
+Wants=network-online.target
+Requires=mysql.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/mitre-matrix
+
+# Переменные окружения
+Environment="PATH=/opt/mitre-matrix/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PYTHONPATH=/opt/mitre-matrix"
+Environment="PYTHONUNBUFFERED=1"
+Environment="FLASK_ENV=production"
+
+# Команда запуска
+ExecStart=/opt/mitre-matrix/venv/bin/python3 /opt/mitre-matrix/models/radar_sync_service.py
+
+# Перезапуск при падении
+Restart=always
+RestartSec=10
+StartLimitInterval=300
+StartLimitBurst=5
+
+# Graceful shutdown
+KillMode=mixed
+KillSignal=SIGTERM
+SendSIGKILL=yes
+TimeoutStopSec=30
+
+# Логирование
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=radar-sync
+
+# Безопасность
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/mitre-matrix/logs
+
+# Ограничения ресурсов
+LimitNOFILE=65536
+LimitNPROC=4096
+MemoryLimit=2G
+CPUQuota=50%
+
+# Рабочая директория должна существовать
+ConditionPathExists=/opt/mitre-matrix
+ConditionPathExists=/opt/mitre-matrix/venv/bin/python3
+ConditionPathExists=/opt/mitre-matrix/models/radar_sync_service.py
+
+[Install]
+WantedBy=multi-user.target
